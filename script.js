@@ -72,17 +72,17 @@ function startSlide1Effect() {
     
     // Secuencia de acciones
     const sequence = [
-        { action: 'type', text: 'Título: Un hombre y una mujer', isBold: true },
+        { action: 'type', text: 'Título: "Un hombre y una mujer"', isBold: true },
         { action: 'pause', duration: 500 },
-        { action: 'delete', chars: 21, keepBold: true }, // Borrar solo "Un hombre y una mujer" (21 chars)
+        { action: 'delete', chars: 23, keepBold: true }, // Borrar '"Un hombre y una mujer"' (23 chars con comillas)
         { action: 'pause', duration: 300 },
-        { action: 'type', text: 'Enamorarse a los sesenta', isBold: true },
+        { action: 'type', text: '"Enamorarse a los sesenta"', isBold: true },
         { action: 'pause', duration: 500 },
-        { action: 'delete', chars: 24, keepBold: true }, // Borrar solo "Enamorarse a los sesenta" (24 chars)
+        { action: 'delete', chars: 26, keepBold: true }, // Borrar '"Enamorarse a los sesenta"' (26 chars con comillas)
         { action: 'pause', duration: 300 },
-        { action: 'type', text: 'Amor e identidad', isBold: true },
+        { action: 'type', text: '"Amor e identidad"', isBold: true },
         { action: 'pause', duration: 500 },
-        { action: 'delete', chars: 16, keepBold: true }, // Borrar solo "Amor e identidad" (16 chars)
+        { action: 'delete', chars: 18, keepBold: true }, // Borrar '"Amor e identidad"' (18 chars con comillas)
         { action: 'pause', duration: 300 },
         { action: 'type', text: 'pendiente de decidir', isBold: true },
         { action: 'endBold' },
