@@ -313,17 +313,6 @@ function startSlide3Effect() {
     executeNext();
 }
 
-// SLIDE 4: Cita bíblica
-let slide4Active = false;
-function startSlide4Effect() {
-    if (slide4Active) return;
-    slide4Active = true;
-    
-    const text = `MUJER: "Di a los israelitas que así ha dicho Jehová: yo castigaré al pueblo de Amalec. Ve, pues, y arrasa a Amalec, destruye todo lo que tiene, y no te apiades de él; mata a hombres, mujeres, niños, y aun los de pecho, vacas, ovejas, camellos y asnos"`;
-    
-    typewriterEffect('typewriter-slide4', text, 70);
-}
-
 // SLIDE 5: Teléfono hijo
 let slide5Active = false;
 function startSlide5Effect() {
@@ -784,19 +773,6 @@ function startSlide17Effect() {
     if (!element) return;
     
     element.innerHTML = '<img src="images/M_Alonso_Santiago.png" alt="Letra M" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
-}
-
-// SLIDE 18: Cita Yourcenar
-let slide18Active = false;
-function startSlide18Effect() {
-    if (slide18Active) return;
-    slide18Active = true;
-    
-    const text = `Él dice esta frase tan oportuna de Marguerite Yourcenar:
-
-"Había contraído contigo compromisos imprudentes y la vida se encargó de protestar: te pido perdón, lo más humildemente posible, no por dejarte, sino por haberme quedado tanto tiempo."`;
-    
-    typewriterEffect('typewriter-slide18', text, 70);
 }
 
 // SLIDE 19: LETRA P
