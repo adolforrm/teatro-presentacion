@@ -1055,8 +1055,8 @@ function startSlide32Effect() {
                         } else {
                             clearInterval(deleteInterval);
                             
-                            // Escribir "Bajo tierra, ni muertos." EN NEGRITA
-                            const newTitle = 'Bajo tierra, ni muertos.';
+                            // Escribir "Bajo tierra, ni muertos." EN NEGRITA CON COMILLAS
+                            const newTitle = '"Bajo tierra, ni muertos."';
                             let charIndex = 0;
                             const typeInterval = setInterval(() => {
                                 if (charIndex < newTitle.length) {
@@ -1070,7 +1070,7 @@ function startSlide32Effect() {
                                     setTimeout(() => {
                                         const restOfText = '\n\n(suena música de piano con acordes tipo "cajita de música", y se mantiene durante todo el primer párrafo que ella habla)\n\nEscena 9 – Bajo tierra, ni muertos.\n\n(se apagan las luces de la sala)';
                                         // Cerrar el strong y continuar con texto normal
-                                        let content = '<strong>Título: Bajo tierra, ni muertos.</strong>';
+                                        let content = '<strong>Título: "Bajo tierra, ni muertos."</strong>';
                                         let restIndex = 0;
                                         
                                         const finalInterval = setInterval(() => {
