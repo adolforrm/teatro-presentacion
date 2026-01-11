@@ -89,7 +89,7 @@ function startSlide1Effect() {
         { action: 'newline' },
         { action: 'newline' },
         { action: 'pause', duration: 500 },
-        { action: 'type', text: '(suena a piano el teclado de una máquina de escribir)' },
+        { action: 'type', text: '(suena a piano el teclado de una máquina de escribir, si se puede, que va a ser que no)' },
         { action: 'newline' },
         { action: 'newline' },
         { action: 'pause', duration: 300 },
