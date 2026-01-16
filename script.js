@@ -1,11 +1,21 @@
 // ===== VARIABLES GLOBALES =====
 let currentSlide = 0;
 const totalSlides = 34; // 0-33
+// Audio Sirat
+let siratAudio = null;
+let siratAudioStarted = false;
+let siratBlockAdvance = true;
+let siratAllowAdvanceTimeout = null;
+let siratStopOnJoder = false;
 
 // ===== FUNCIÓN PRINCIPAL DE NAVEGACIÓN =====
 function showSlide(index) {
     const slides = document.querySelectorAll('.slide');
-    
+    // Bloqueo especial para la primera diapositiva si el audio no ha terminado
+    if (currentSlide === 0 && siratBlockAdvance && index > 0) {
+        // No avanzar
+        return;
+    }
     if (index >= totalSlides) {
         currentSlide = totalSlides - 1;
     } else if (index < 0) {
@@ -13,14 +23,12 @@ function showSlide(index) {
     } else {
         currentSlide = index;
     }
-    
     slides.forEach((slide, i) => {
         slide.classList.remove('active');
         if (i === currentSlide) {
             slide.classList.add('active');
         }
     });
-    
     // Detener síntesis de voz al cambiar de diapositiva
     speechSynthesis.cancel();
 }
@@ -114,7 +122,14 @@ function startSlide1Effect() {
         { action: 'newline' },
         { action: 'newline' },
         { action: 'pause', duration: 300 },
-        { action: 'type', text: 'MUJER: ¡Joder! Nacer recibir mamar...' },
+        { action: 'type', text: 'MUJER: ¡Joder! Nacer recibir mamar...', onType: () => {
+            // Cuando se escriba "joder!" en la segunda diapositiva, detener el audio
+            if (siratAudio && siratAudioStarted && !siratStopOnJoder) {
+                siratAudio.pause();
+                siratAudio.currentTime = 0;
+                siratStopOnJoder = true;
+            }
+        } },
         { action: 'removeCursor' }
     ];
     
@@ -133,26 +148,26 @@ function startSlide1Effect() {
         if (action.action === 'type') {
             let charIndex = 0;
             const isBold = action.isBold;
-            
             const typingInterval = setInterval(() => {
                 if (charIndex < action.text.length) {
                     const char = action.text[charIndex];
-                    
                     if (isBold) {
                         boldContent += char;
                         inBoldSection = true;
                     } else {
                         normalContent += char;
                     }
-                    
                     updateDisplay();
+                    // Si hay función onType y justo se escribe "joder!", llamarla
+                    if (action.onType && action.text.substring(0, charIndex + 1).toLowerCase().includes('joder!')) {
+                        action.onType();
+                    }
                     charIndex++;
                 } else {
                     clearInterval(typingInterval);
                     executeNextAction();
                 }
             }, 60);
-            
         } else if (action.action === 'delete') {
             let charsDeleted = 0;
             const keepBold = action.keepBold;
@@ -1126,10 +1141,29 @@ for (let i = 1; i <= 33; i++) {
 // ===== NAVEGACIÓN CON CLICK =====
 document.addEventListener('click', (e) => {
     if (e.target.closest('.nav-btn') || e.target.closest('.dot')) return;
-    
+    // Si estamos en la primera diapositiva y el audio no ha empezado, lo iniciamos y bloqueamos avance
+    if (currentSlide === 0 && !siratAudioStarted) {
+        if (!siratAudio) siratAudio = document.getElementById('audio-sirat');
+        if (siratAudio) {
+            siratAudio.currentTime = 0;
+            siratAudio.play();
+            siratAudioStarted = true;
+            siratBlockAdvance = true;
+            // Tras 90 segundos, permitir avanzar y cambiar automáticamente
+            siratAllowAdvanceTimeout = setTimeout(() => {
+                siratBlockAdvance = false;
+                showSlide(1);
+            }, 90000);
+        }
+        return;
+    }
+    // Si estamos en la primera diapositiva y el audio ya está sonando, no avanzar
+    if (currentSlide === 0 && siratBlockAdvance) {
+        return;
+    }
+    // Comportamiento normal para otras diapositivas
     const screenWidth = window.innerWidth;
     const clickX = e.clientX;
-    
     if (clickX < screenWidth * 0.3) {
         showSlide(currentSlide - 1);
     } else {
