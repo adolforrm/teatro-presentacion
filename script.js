@@ -1119,6 +1119,92 @@ Hay música
 Bailan`;
     
     typewriterEffect('typewriter-slide33', text, 70);
+        // Crossfade logic: Sirat starts at second 20, radio starts at full volume, Sirat at 0, fade as typewriter reaches 'Bailan'
+        // Ensure both audios are loaded
+        if (!siratAudio) siratAudio = document.getElementById('audio-sirat');
+        if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
+        if (siratAudio) {
+            siratAudio.currentTime = 20;
+            siratAudio.volume = 0;
+            siratAudio.pause();
+        }
+        if (apagonAudio) {
+            apagonAudio.currentTime = 0;
+            apagonAudio.volume = 1;
+            apagonAudio.pause();
+        }
+
+        // Start both audios when slide activates
+        setTimeout(() => {
+            if (apagonAudio) {
+                apagonAudio.play();
+                apagonAudioStarted = true;
+            }
+            if (siratAudio) {
+                siratAudio.play();
+                siratAudioStarted = true;
+            }
+        }, 400);
+
+        // Custom typewriter with crossfade logic
+        const elementId = 'typewriter-slide33';
+        const twElement = document.getElementById(elementId);
+        if (!twElement) return;
+        twElement.innerHTML = '<span class="typed-text"></span><span class="cursor">|</span>';
+        const typedSpan = twElement.querySelector('.typed-text');
+        const cursor = twElement.querySelector('.cursor');
+        let i = 0;
+        let wordBuffer = '';
+        let fadeInterval = null;
+        let fadeProgress = 0;
+        const totalFadeSteps = 30; // Number of steps for fade
+        const bailanWord = 'Bailan';
+        function doFadeStep() {
+            fadeProgress++;
+            const siratVol = Math.min(1, fadeProgress / totalFadeSteps);
+            const apagonVol = Math.max(0, 1 - (fadeProgress / totalFadeSteps));
+            if (siratAudio) siratAudio.volume = siratVol;
+            if (apagonAudio) apagonAudio.volume = apagonVol;
+            if (fadeProgress >= totalFadeSteps) {
+                if (apagonAudio) {
+                    apagonAudio.pause();
+                    apagonAudio.currentTime = 0;
+                    apagonAudioStarted = false;
+                }
+                if (siratAudio) siratAudio.volume = 1;
+                clearInterval(fadeInterval);
+            }
+        }
+        const interval = setInterval(() => {
+            if (i < text.length) {
+                const char = text.charAt(i);
+                if (char === '\n') {
+                    const br = document.createElement('br');
+                    typedSpan.appendChild(br);
+                    wordBuffer = '';
+                } else {
+                    const textNode = document.createTextNode(char);
+                    typedSpan.appendChild(textNode);
+                    if (/\w/.test(char)) {
+                        wordBuffer += char;
+                    } else {
+                        wordBuffer = '';
+                    }
+                }
+                // Start fade when 'Bailan' begins to type
+                if (wordBuffer === bailanWord && !fadeInterval) {
+                    fadeInterval = setInterval(doFadeStep, 60);
+                }
+                i++;
+            } else {
+                clearInterval(interval);
+                if (cursor) {
+                    setTimeout(() => {
+                        cursor.style.display = 'none';
+                    }, 1000);
+                }
+            }
+        }, 70);
 }
 
 // ===== MUTATION OBSERVERS =====
@@ -1186,8 +1272,10 @@ document.addEventListener('click', (e) => {
         }
         return;
     }
-    // Si estamos en la primera diapositiva y el audio ya está sonando, no avanzar
+    // Si estamos en la primera diapositiva y el audio ya está sonando, permitir avanzar con click
     if (currentSlide === 0 && siratBlockAdvance) {
+        siratBlockAdvance = false;
+        showSlide(1);
         return;
     }
     // Comportamiento normal para otras diapositivas
