@@ -1119,92 +1119,24 @@ Hay música
 Bailan`;
     
     typewriterEffect('typewriter-slide33', text, 70);
-        // Crossfade logic: Sirat starts at second 20, radio starts at full volume, Sirat at 0, fade as typewriter reaches 'Bailan'
-        // Ensure both audios are loaded
-        if (!siratAudio) siratAudio = document.getElementById('audio-sirat');
+        // Start simple typewriter for slide33
+        typewriterEffect('typewriter-slide33', text, 70);
+
+        // Ensure only the apagon audio (mabel apagon_mezcla.mp3) is used for this slide.
+        // Do NOT start or touch Sirat audio here.
         if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
-        if (siratAudio) {
-            siratAudio.currentTime = 20;
-            siratAudio.volume = 0;
-            siratAudio.pause();
-        }
         if (apagonAudio) {
             apagonAudio.currentTime = 0;
             apagonAudio.volume = 1;
-            apagonAudio.pause();
+            // Debug logs: track lifecycle events to diagnose unexpected stops/white screen
+            console.log('[slide33] starting apagon audio at', new Date().toISOString());
+            apagonAudio.addEventListener('play', () => console.log('[apagon] play event at', new Date().toISOString()));
+            apagonAudio.addEventListener('pause', () => console.log('[apagon] pause event at', new Date().toISOString()));
+            apagonAudio.addEventListener('ended', () => console.log('[apagon] ended event at', new Date().toISOString()));
+            // Play immediately when the slide effect starts
+            apagonAudio.play();
+            apagonAudioStarted = true;
         }
-
-        // Start both audios when slide activates
-        setTimeout(() => {
-            if (apagonAudio) {
-                apagonAudio.play();
-                apagonAudioStarted = true;
-            }
-            if (siratAudio) {
-                siratAudio.play();
-                siratAudioStarted = true;
-            }
-        }, 400);
-
-        // Custom typewriter with crossfade logic
-        const elementId = 'typewriter-slide33';
-        const twElement = document.getElementById(elementId);
-        if (!twElement) return;
-        twElement.innerHTML = '<span class="typed-text"></span><span class="cursor">|</span>';
-        const typedSpan = twElement.querySelector('.typed-text');
-        const cursor = twElement.querySelector('.cursor');
-        let i = 0;
-        let wordBuffer = '';
-        let fadeInterval = null;
-        let fadeProgress = 0;
-        const totalFadeSteps = 30; // Number of steps for fade
-        const bailanWord = 'Bailan';
-        function doFadeStep() {
-            fadeProgress++;
-            const siratVol = Math.min(1, fadeProgress / totalFadeSteps);
-            const apagonVol = Math.max(0, 1 - (fadeProgress / totalFadeSteps));
-            if (siratAudio) siratAudio.volume = siratVol;
-            if (apagonAudio) apagonAudio.volume = apagonVol;
-            if (fadeProgress >= totalFadeSteps) {
-                if (apagonAudio) {
-                    apagonAudio.pause();
-                    apagonAudio.currentTime = 0;
-                    apagonAudioStarted = false;
-                }
-                if (siratAudio) siratAudio.volume = 1;
-                clearInterval(fadeInterval);
-            }
-        }
-        const interval = setInterval(() => {
-            if (i < text.length) {
-                const char = text.charAt(i);
-                if (char === '\n') {
-                    const br = document.createElement('br');
-                    typedSpan.appendChild(br);
-                    wordBuffer = '';
-                } else {
-                    const textNode = document.createTextNode(char);
-                    typedSpan.appendChild(textNode);
-                    if (/\w/.test(char)) {
-                        wordBuffer += char;
-                    } else {
-                        wordBuffer = '';
-                    }
-                }
-                // Start fade when 'Bailan' begins to type
-                if (wordBuffer === bailanWord && !fadeInterval) {
-                    fadeInterval = setInterval(doFadeStep, 60);
-                }
-                i++;
-            } else {
-                clearInterval(interval);
-                if (cursor) {
-                    setTimeout(() => {
-                        cursor.style.display = 'none';
-                    }, 1000);
-                }
-            }
-        }, 70);
 }
 
 // ===== MUTATION OBSERVERS =====
@@ -1256,6 +1188,17 @@ if (slide33Element) {
 // ===== NAVEGACIÓN CON CLICK =====
 document.addEventListener('click', (e) => {
     if (e.target.closest('.nav-btn') || e.target.closest('.dot')) return;
+    // Special behavior for slide 33: a click stops the apagon audio and does NOT advance the slide.
+    if (currentSlide === 33) {
+        if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
+        if (apagonAudio && apagonAudioStarted && !apagonAudio.paused) {
+            apagonAudio.pause();
+            apagonAudio.currentTime = 0;
+            apagonAudioStarted = false;
+            return;
+        }
+        // If audio already stopped, allow normal click navigation below
+    }
     // Si estamos en la primera diapositiva y el audio no ha empezado, lo iniciamos y bloqueamos avance
     if (currentSlide === 0 && !siratAudioStarted) {
         if (!siratAudio) siratAudio = document.getElementById('audio-sirat');
