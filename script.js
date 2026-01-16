@@ -1063,7 +1063,7 @@ function startSlide32Effect() {
                                     
                                     // Continuar con el resto del texto (NORMAL, no negrita)
                                     setTimeout(() => {
-                                        const restOfText = '\n\n(suena música de piano con acordes tipo "cajita de música", y se mantiene durante todo el primer párrafo que ella habla)\n\nEscena 9 – Bajo tierra, ni muertos.\n\n(se apagan las luces de la sala)';
+                                        const restOfText = '\n\n(suena música de piano con acordes tipo "cajita de música", y se mantiene durante todo el primer párrafo que ella habla)\n\nEscena 9 – Bajo tierra, ni muertos.';
                                         // Cerrar el strong y continuar con texto normal
                                         let content = '<strong>Título: "Bajo tierra, ni muertos."</strong>';
                                         let restIndex = 0;
@@ -1108,15 +1108,15 @@ function startSlide33Effect() {
     
     element.innerHTML = '';
     
-    const text = `Escena 10 – APAGÓN
+    const text = `(se apagan las luces de la sala)
+
+Escena 10 – APAGÓN
 
 No hay luz en toda España, no se sabe qué está pasando. No funciona nada. La mujer coge un transistor a pilas. Él coge una vela, que enciende, y camina hacia ella con un camping gas, dispuestos a preparar la cena. Abren un cava y celebran la vida, más incierta que nunca.
 
 Hay música
 
-Bailan 
-
-Innocent when you dream`;
+Bailan`;
     
     typewriterEffect('typewriter-slide33', text, 70);
 }
