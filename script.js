@@ -8,6 +8,10 @@ let siratBlockAdvance = true;
 let siratAllowAdvanceTimeout = null;
 let siratStopOnJoder = false;
 
+// Audio Apagon (última diapositiva)
+let apagonAudio = null;
+let apagonAudioStarted = false;
+
 // ===== FUNCIÓN PRINCIPAL DE NAVEGACIÓN =====
 function showSlide(index) {
     const slides = document.querySelectorAll('.slide');
@@ -1119,7 +1123,6 @@ Innocent when you dream`;
 
 // ===== MUTATION OBSERVERS =====
 const slideObservers = [];
-
 for (let i = 1; i <= 33; i++) {
     const observer = new MutationObserver((mutations) => {
         mutations.forEach((mutation) => {
@@ -1130,12 +1133,38 @@ for (let i = 1; i <= 33; i++) {
             }
         });
     });
-    
     const slideElement = document.getElementById(`slide${i}`);
     if (slideElement) {
         observer.observe(slideElement, { attributes: true, attributeFilter: ['class'] });
         slideObservers.push(observer);
     }
+}
+
+// Última diapositiva (slide33): reproducir audio apagon automáticamente
+const observerApagon = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+        if (mutation.target.classList.contains('active') && mutation.target.id === 'slide33') {
+            if (!apagonAudioStarted) {
+                if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
+                if (apagonAudio) {
+                    apagonAudio.currentTime = 0;
+                    apagonAudio.play();
+                    apagonAudioStarted = true;
+                }
+            }
+        } else if (!mutation.target.classList.contains('active') && mutation.target.id === 'slide33') {
+            // Si se sale de la última diapositiva, detener el audio
+            if (apagonAudio && !apagonAudio.paused) {
+                apagonAudio.pause();
+                apagonAudio.currentTime = 0;
+                apagonAudioStarted = false;
+            }
+        }
+    });
+});
+const slide33Element = document.getElementById('slide33');
+if (slide33Element) {
+    observerApagon.observe(slide33Element, { attributes: true, attributeFilter: ['class'] });
 }
 
 // ===== NAVEGACIÓN CON CLICK =====
