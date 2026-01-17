@@ -1042,8 +1042,8 @@ del {
     max-width: 90%;
     max-height: 85vh;
     display: block;
-    /* push slightly to the right; adjust percentage if you want more/less shift */
-    margin: 0 0 0 8%;
+    /* push more to the right; increase/decrease this percentage to taste */
+    margin: 0 0 0 20%;
 }
 
 /* Animaciones */
