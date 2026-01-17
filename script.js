@@ -745,7 +745,7 @@ function startSlide13Effect() {
     const element = document.getElementById('typewriter-slide13');
     if (!element) return;
     
-    element.innerHTML = '<img src="images/A_Alonso_Santiago.png" alt="Letra A" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
+    element.innerHTML = '<img class="letter-image" src="images/A_Alonso_Santiago.png" alt="Letra A">';
 }
 
 let slide14Active = false;
@@ -756,7 +756,7 @@ function startSlide14Effect() {
     const element = document.getElementById('typewriter-slide14');
     if (!element) return;
     
-    element.innerHTML = '<img src="images/F_Alonso_Santiago.png" alt="Letra F" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
+    element.innerHTML = '<img class="letter-image" src="images/F_Alonso_Santiago.png" alt="Letra F">';
 }
 
 let slide15Active = false;
@@ -767,7 +767,7 @@ function startSlide15Effect() {
     const element = document.getElementById('typewriter-slide15');
     if (!element) return;
     
-    element.innerHTML = '<img src="images/L_Alonso_Santiago.png" alt="Letra L" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
+    element.innerHTML = '<img class="letter-image" src="images/L_Alonso_Santiago.png" alt="Letra L">';
 }
 
 let slide16Active = false;
@@ -778,7 +778,7 @@ function startSlide16Effect() {
     const element = document.getElementById('typewriter-slide16');
     if (!element) return;
     
-    element.innerHTML = '<img src="images/D_Alonso_Santiago.png" alt="Letra D" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
+    element.innerHTML = '<img class="letter-image" src="images/D_Alonso_Santiago.png" alt="Letra D">';
 }
 
 let slide17Active = false;
@@ -789,7 +789,7 @@ function startSlide17Effect() {
     const element = document.getElementById('typewriter-slide17');
     if (!element) return;
     
-    element.innerHTML = '<img src="images/M_Alonso_Santiago.png" alt="Letra M" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
+    element.innerHTML = '<img class="letter-image" src="images/M_Alonso_Santiago.png" alt="Letra M">';
 }
 
 // SLIDE 19: LETRA P
@@ -801,7 +801,7 @@ function startSlide19Effect() {
     const element = document.getElementById('typewriter-slide19');
     if (!element) return;
     
-    element.innerHTML = '<img src="images/P_Alonso_Santiago.png" alt="Letra P" style="max-width: 90%; max-height: 85vh; display: block; margin: 0 auto;">';
+    element.innerHTML = '<img class="letter-image" src="images/P_Alonso_Santiago.png" alt="Letra P">';
 }
 
 // SLIDE 20: El sentido no es previo

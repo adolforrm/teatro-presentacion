@@ -1037,6 +1037,15 @@ del {
     opacity: 0.8;
 }
 
+/* Letter images used in slides 13-17,19: keep them large but nudged to the right */
+.letter-image {
+    max-width: 90%;
+    max-height: 85vh;
+    display: block;
+    /* push slightly to the right; adjust percentage if you want more/less shift */
+    margin: 0 0 0 8%;
+}
+
 /* Animaciones */
 @keyframes fadeIn {
     from {
