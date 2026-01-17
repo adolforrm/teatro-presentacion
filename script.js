@@ -705,9 +705,7 @@ function startSlide11Effect() {
     if (slide11Active) return;
     slide11Active = true;
     
-    const text = `Escena 4 – JULTAGI
-
-suena música de Tom Waits, "Eres inocente cuando sueñas"`;
+    const text = `Escena 4 – JULTAGI`;
     
     typewriterEffect('typewriter-slide11', text, 70);
 }
@@ -1128,11 +1126,6 @@ Bailan`;
         if (apagonAudio) {
             apagonAudio.currentTime = 0;
             apagonAudio.volume = 1;
-            // Debug logs: track lifecycle events to diagnose unexpected stops/white screen
-            console.log('[slide33] starting apagon audio at', new Date().toISOString());
-            apagonAudio.addEventListener('play', () => console.log('[apagon] play event at', new Date().toISOString()));
-            apagonAudio.addEventListener('pause', () => console.log('[apagon] pause event at', new Date().toISOString()));
-            apagonAudio.addEventListener('ended', () => console.log('[apagon] ended event at', new Date().toISOString()));
             // Play immediately when the slide effect starts
             apagonAudio.play();
             apagonAudioStarted = true;
