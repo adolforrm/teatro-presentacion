@@ -318,6 +318,19 @@ p {
     overflow: hidden;
 }
 
+/* Override to remove top gap caused by .slide padding for slide33 */
+#slide33 {
+    padding-top: 0; /* remove the 60px padding so blackout fills from the top */
+}
+
+#slide33 .blackout-scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+}
+
 /* Vela */
 .candle-container {
     position: absolute;
