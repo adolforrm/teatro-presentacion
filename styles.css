@@ -1043,7 +1043,7 @@ del {
     max-height: 85vh;
     display: block;
     /* push more to the right; increase/decrease this percentage to taste */
-    margin: 0 0 0 20%;
+    margin: 0 0 0 35%;
 }
 
 /* Animaciones */
