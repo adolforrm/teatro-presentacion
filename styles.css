@@ -1037,6 +1037,16 @@ del {
     opacity: 0.8;
 }
 
+/* Final poster adjustment */
+.final-poster {
+    max-width: 90vw;
+    max-height: 90vh;
+    display: block;
+    position: relative;
+    left: 12%; /* nudge more to the right */
+    top: -40px; /* keep existing vertical offset */
+}
+
 /* Letter images used in slides 13-17,19: keep them large but nudged to the right */
 .letter-image {
     max-width: 90%;
