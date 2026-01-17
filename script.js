@@ -11,6 +11,7 @@ let siratStopOnJoder = false;
 // Audio Apagon (última diapositiva)
 let apagonAudio = null;
 let apagonAudioStarted = false;
+let apagonFading = false; // flag to avoid double fades
 
 // ===== FUNCIÓN PRINCIPAL DE NAVEGACIÓN =====
 function showSlide(index) {
@@ -1164,11 +1165,11 @@ const observerApagon = new MutationObserver((mutations) => {
                 }
             }
         } else if (!mutation.target.classList.contains('active') && mutation.target.id === 'slide33') {
-            // Si se sale de la última diapositiva, detener el audio
-            if (apagonAudio && !apagonAudio.paused) {
-                apagonAudio.pause();
-                apagonAudio.currentTime = 0;
-                apagonAudioStarted = false;
+            // Cuando salimos de la diapositiva 33, en vez de cortar bruscamente,
+            // hacemos un fade-out gradual si el audio está sonando.
+            if (apagonAudio && !apagonAudio.paused && !apagonFading) {
+                // 2500ms fade por defecto
+                fadeOutApagon(2500);
             }
         }
     });
@@ -1184,13 +1185,20 @@ document.addEventListener('click', (e) => {
     // Special behavior for slide 33: a click stops the apagon audio and does NOT advance the slide.
     if (currentSlide === 33) {
         if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
-        if (apagonAudio && apagonAudioStarted && !apagonAudio.paused) {
-            apagonAudio.pause();
-            apagonAudio.currentTime = 0;
-            apagonAudioStarted = false;
+        // Instead of stopping abruptly, do a graceful fade-out and advance.
+        if (apagonAudio && apagonAudioStarted && !apagonAudio.paused && !apagonFading) {
+            // Start a short fade (1.8s) and when finished advance to next slide.
+            apagonFading = true;
+            fadeOutApagon(1800, () => {
+                // After fade completes, advance slide
+                apagonFading = false;
+                apagonAudioStarted = false;
+                showSlide(currentSlide + 1);
+            });
+            // Prevent further click handling
             return;
         }
-        // If audio already stopped, allow normal click navigation below
+        // If audio already stopped or paused, just advance normally
     }
     // Si estamos en la primera diapositiva y el audio no ha empezado, lo iniciamos y bloqueamos avance
     if (currentSlide === 0 && !siratAudioStarted) {
@@ -1223,6 +1231,40 @@ document.addEventListener('click', (e) => {
         showSlide(currentSlide + 1);
     }
 });
+
+// Fade-out helper for apagon audio
+function fadeOutApagon(duration = 2000, onComplete = null) {
+    if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
+    if (!apagonAudio) {
+        if (onComplete) onComplete();
+        return;
+    }
+    apagonFading = true;
+    const startVolume = apagonAudio.volume;
+    const startTime = performance.now();
+
+    function step(now) {
+        const elapsed = now - startTime;
+        const t = Math.min(1, elapsed / duration);
+        apagonAudio.volume = Math.max(0, startVolume * (1 - t));
+        if (t < 1) {
+            requestAnimationFrame(step);
+        } else {
+            try {
+                apagonAudio.pause();
+                apagonAudio.currentTime = 0;
+            } catch (e) {
+                console.error('[apagon] error stopping audio after fade', e);
+            }
+            apagonAudio.volume = startVolume; // reset for next play
+            apagonAudioStarted = false;
+            apagonFading = false;
+            if (onComplete) onComplete();
+        }
+    }
+
+    requestAnimationFrame(step);
+}
 
 // ===== NAVEGACIÓN CON TECLADO =====
 document.addEventListener('keydown', (e) => {
