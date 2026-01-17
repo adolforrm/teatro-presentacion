@@ -331,6 +331,11 @@ p {
     height: 100vh;
 }
 
+/* Align apagon text vertical offset with other slides (slide padding 60 + content padding 40 = 100px) */
+#slide33 .apagon-text {
+    padding-top: 100px; /* match other slides' top offset */
+}
+
 /* Vela */
 .candle-container {
     position: absolute;
