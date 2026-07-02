@@ -1,6 +1,6 @@
 // ===== VARIABLES GLOBALES =====
 let currentSlide = 0;
-const totalSlides = 34; // 0-33
+const totalSlides = 35; // 0-34
 // Audio Sirat
 let siratAudio = null;
 let siratAudioStarted = false;
@@ -333,13 +333,21 @@ function startSlide3Effect() {
     executeNext();
 }
 
+// SLIDE 4: BORROSA
+let slide4Active = false;
+function startSlide4Effect() {
+    if (slide4Active) return;
+    slide4Active = true;
+    typewriterEffect('typewriter-slide4', 'BORROSA', 1000);
+}
+
 // SLIDE 5: Teléfono hijo
 let slide5Active = false;
 function startSlide5Effect() {
     if (slide5Active) return;
     slide5Active = true;
     
-    const text = `MUJER: ... se convertía en un borrego dócil a su lado.
+    const text = `MUJER: ... decía o soñaba cada persona que creo ver en mí.
 
 (suena el teléfono) (usar piano con melodía que asemeje un tono de llamada)
 
@@ -719,7 +727,7 @@ function startSlide12Effect() {
     
     const text = `MUJER: .....con el peso de tu alevosía
 
-(si tuviéramos presupuesto, podríamos contar con el abecedario erótico de Alonso Santiago. Hablar con Pilar)
+(si tuviéramos presupuesto, podríamos contar con el ABECEDARIO ERÓTICO de Alonso Santiago. Hablar con Pilar, que tiene los derechos de la obra de Alonso, para ver si es posible.)
 
 HOMBRE: Un día le prometí.....`;
     
