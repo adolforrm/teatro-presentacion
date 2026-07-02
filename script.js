@@ -1121,11 +1121,11 @@ function startSlide33Effect() {
 
 Escena 10 – APAGÓN
 
-No hay luz en toda España, no se sabe qué está pasando. No funciona nada. La mujer coge un transistor a pilas. Él coge una vela, que enciende, y camina hacia ella con un camping gas, dispuestos a preparar la cena. Abren un cava y celebran la vida, más incierta que nunca.
+No hay luz en toda España, no se sabe qué está pasando. No funciona nada. La vida se presenta más incierta que nunca. Enciende una radio a pilas, y sintoniza música. Bailan sin saber qué ritmo imprimir, desacompasados, sin intentar entender qué música está sonando, encontrando su compás, el que les permita avanzar.
 
 Hay música
 
-Bailan`;
+Bailan (y si puede ser, el público también)`;
     
     typewriterEffect('typewriter-slide33', text, 70);
         // Start simple typewriter for slide33
