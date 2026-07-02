@@ -10,8 +10,10 @@ let siratStopOnJoder = false;
 
 // Audio Apagon (última diapositiva)
 let apagonAudio = null;
+let apagonAudio2 = null; // segundo audio para crossfade
 let apagonAudioStarted = false;
 let apagonFading = false; // flag to avoid double fades
+let apagonCrossfadeTimer = null;
 
 // ===== FUNCIÓN PRINCIPAL DE NAVEGACIÓN =====
 function showSlide(index) {
@@ -1132,12 +1134,40 @@ Bailan`;
         // Ensure only the apagon audio (mabel apagon_mezcla.mp3) is used for this slide.
         // Do NOT start or touch Sirat audio here.
         if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
+        if (!apagonAudio2) apagonAudio2 = document.getElementById('audio-apagon2');
         if (apagonAudio) {
             apagonAudio.currentTime = 0;
             apagonAudio.volume = 1;
-            // Play immediately when the slide effect starts
             apagonAudio.play();
             apagonAudioStarted = true;
+
+            // Crossfade: a los 55s empezar fade-out del audio 1
+            // y fade-in del audio 2 desde 1:58
+            const CROSSFADE_START = 55000;  // ms cuando empieza el crossfade
+            const CROSSFADE_DURATION = 5000; // 5 segundos de crossfade
+            const SECOND_START_TIME = 118;   // segundos (1:58)
+
+            apagonCrossfadeTimer = setTimeout(() => {
+                if (!apagonAudio2) return;
+                apagonAudio2.currentTime = SECOND_START_TIME;
+                apagonAudio2.volume = 0;
+                apagonAudio2.play();
+
+                const startTime = performance.now();
+                function crossfadeStep(now) {
+                    const t = Math.min(1, (now - startTime) / CROSSFADE_DURATION);
+                    apagonAudio.volume = Math.max(0, 1 - t);
+                    apagonAudio2.volume = Math.min(1, t);
+                    if (t < 1) {
+                        requestAnimationFrame(crossfadeStep);
+                    } else {
+                        apagonAudio.pause();
+                        apagonAudio.currentTime = 0;
+                        // apagonAudio2 sigue sonando a volumen 1
+                    }
+                }
+                requestAnimationFrame(crossfadeStep);
+            }, CROSSFADE_START);
         }
 }
 
@@ -1164,19 +1194,12 @@ for (let i = 1; i <= 33; i++) {
 const observerApagon = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
         if (mutation.target.classList.contains('active') && mutation.target.id === 'slide33') {
-            if (!apagonAudioStarted) {
-                if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
-                if (apagonAudio) {
-                    apagonAudio.currentTime = 0;
-                    apagonAudio.play();
-                    apagonAudioStarted = true;
-                }
-            }
+            // El audio lo arranca directamente startSlide33Effect
         } else if (!mutation.target.classList.contains('active') && mutation.target.id === 'slide33') {
-            // Cuando salimos de la diapositiva 33, en vez de cortar bruscamente,
-            // hacemos un fade-out gradual si el audio está sonando.
+            // Al salir del slide33, parar ambos audios y limpiar el timer de crossfade
+            if (apagonCrossfadeTimer) { clearTimeout(apagonCrossfadeTimer); apagonCrossfadeTimer = null; }
+            if (apagonAudio2 && !apagonAudio2.paused) { apagonAudio2.pause(); apagonAudio2.currentTime = 0; apagonAudio2.volume = 1; }
             if (apagonAudio && !apagonAudio.paused && !apagonFading) {
-                // 2500ms fade por defecto
                 fadeOutApagon(2500);
             }
         }
@@ -1194,16 +1217,18 @@ document.addEventListener('click', (e) => {
     if (currentSlide === 33) {
         if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
         // Instead of stopping abruptly, do a graceful fade-out and advance.
-        if (apagonAudio && apagonAudioStarted && !apagonAudio.paused && !apagonFading) {
-            // Start a short fade (1.8s) and when finished advance to next slide.
+        if (apagonAudioStarted && !apagonFading) {
+            // Parar crossfade timer si aún no ha llegado
+            if (apagonCrossfadeTimer) { clearTimeout(apagonCrossfadeTimer); apagonCrossfadeTimer = null; }
             apagonFading = true;
-            fadeOutApagon(1800, () => {
-                // After fade completes, advance slide
-                apagonFading = false;
-                apagonAudioStarted = false;
-                showSlide(currentSlide + 1);
-            });
-            // Prevent further click handling
+            // Fade out ambos audios en paralelo y luego avanzar
+            let done = 0;
+            const onBothDone = () => { done++; if (done >= 1) { apagonFading = false; apagonAudioStarted = false; showSlide(currentSlide + 1); } };
+            const audio1Playing = apagonAudio && !apagonAudio.paused;
+            const audio2Playing = apagonAudio2 && !apagonAudio2.paused;
+            if (audio1Playing) fadeOutApagon(1800, onBothDone);
+            if (audio2Playing) fadeOutAudio(apagonAudio2, 1800, onBothDone);
+            if (!audio1Playing && !audio2Playing) onBothDone();
             return;
         }
         // If audio already stopped or paused, just advance normally
@@ -1240,38 +1265,35 @@ document.addEventListener('click', (e) => {
     }
 });
 
-// Fade-out helper for apagon audio
-function fadeOutApagon(duration = 2000, onComplete = null) {
-    if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
-    if (!apagonAudio) {
-        if (onComplete) onComplete();
-        return;
-    }
-    apagonFading = true;
-    const startVolume = apagonAudio.volume;
+// Fade-out helper genérico
+function fadeOutAudio(audioEl, duration = 2000, onComplete = null) {
+    if (!audioEl) { if (onComplete) onComplete(); return; }
+    const startVolume = audioEl.volume;
     const startTime = performance.now();
-
     function step(now) {
-        const elapsed = now - startTime;
-        const t = Math.min(1, elapsed / duration);
-        apagonAudio.volume = Math.max(0, startVolume * (1 - t));
+        const t = Math.min(1, (now - startTime) / duration);
+        audioEl.volume = Math.max(0, startVolume * (1 - t));
         if (t < 1) {
             requestAnimationFrame(step);
         } else {
-            try {
-                apagonAudio.pause();
-                apagonAudio.currentTime = 0;
-            } catch (e) {
-                console.error('[apagon] error stopping audio after fade', e);
-            }
-            apagonAudio.volume = startVolume; // reset for next play
-            apagonAudioStarted = false;
-            apagonFading = false;
+            try { audioEl.pause(); audioEl.currentTime = 0; } catch(e) {}
+            audioEl.volume = startVolume;
             if (onComplete) onComplete();
         }
     }
-
     requestAnimationFrame(step);
+}
+
+// Fade-out helper for apagon audio (audio1)
+function fadeOutApagon(duration = 2000, onComplete = null) {
+    if (!apagonAudio) apagonAudio = document.getElementById('audio-apagon');
+    if (!apagonAudio) { if (onComplete) onComplete(); return; }
+    apagonFading = true;
+    fadeOutAudio(apagonAudio, duration, () => {
+        apagonAudioStarted = false;
+        apagonFading = false;
+        if (onComplete) onComplete();
+    });
 }
 
 // ===== NAVEGACIÓN CON TECLADO =====
